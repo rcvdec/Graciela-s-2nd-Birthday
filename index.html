@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Graciela's 2nd Birthday RSVP</title>
-  <link href="https://fonts.googleapis.com/css2?family=Neucha&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Neucha&family=Raleway:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
     body {
       margin: 0;
       font-family: 'Raleway', sans-serif;
-      background: url('https://graciela-birthday-rsvp.vercel.app/assets/bg-greek.jpg') center/cover no-repeat fixed;
+      background: url('BACKGROUND.png') center/cover no-repeat fixed;
       color: #3a1f0d;
     }
     .container {
-      background: rgba(255, 255, 255, 0.97);
+      background: rgba(255, 255, 255, 0.95);
       max-width: 500px;
       margin: 2rem auto;
       padding: 2rem;
@@ -29,13 +29,14 @@
       margin: 0.5rem 0 1.5rem;
       font-size: 1rem;
     }
-    button, select, input[type="text"] {
+    button, select, input[type="text"], textarea {
       padding: 0.8rem 1rem;
       font-size: 1rem;
       margin: 0.6rem 0;
       width: 100%;
       border-radius: 10px;
       border: 1px solid #b7b7b7;
+      box-sizing: border-box;
     }
     .btn-group button {
       width: 45%;
@@ -76,7 +77,7 @@
 
   <div class="container hidden" id="form">
     <h2>Who’s coming?</h2>
-    <input type="text" id="name" placeholder="Your Name">
+    <input type="text" id="name" placeholder="Your Name" />
     <label for="meal">Select your Gyros:</label>
     <select id="meal">
       <option value="">-- Choose One --</option>
@@ -87,10 +88,11 @@
     </select>
     <p>Choose your toppings:</p>
     <div class="checkboxes">
-      <label><input type="checkbox" id="tomato"> Tomato</label>
-      <label><input type="checkbox" id="onion"> Onion</label>
-      <label><input type="checkbox" id="tzatziki"> Tzatziki</label>
+      <label><input type="checkbox" id="tomato" /> Tomato</label>
+      <label><input type="checkbox" id="onion" /> Onion</label>
+      <label><input type="checkbox" id="tzatziki" /> Tzatziki</label>
     </div>
+    <textarea id="notes" placeholder="Any special requests or allergies?"></textarea>
     <button onclick="submitYes()">Submit</button>
   </div>
 
@@ -105,7 +107,7 @@
   </div>
 
   <script>
-    const webhookURL = "https://script.google.com/macros/s/AKfycbyhli803Gi_vrCBIam_My0qfsXDTeijZthFrgzxyLViNYkTL2JmEMLigHTdn4ZfCWmPwQ/exec";
+    const webhookURL = "https://script.google.com/macros/s/AKfycbxTiaOQ8bsyT7FmZB9qgj61p_3-hSDwZjO2jGxNx-WWesO2yU15DeSWYJh-0znzK-CKKw/exec";
 
     function showRSVP() {
       document.getElementById('home').classList.add('hidden');
@@ -133,6 +135,7 @@
       const tomato = document.getElementById('tomato').checked ? 'Yes' : 'No';
       const onion = document.getElementById('onion').checked ? 'Yes' : 'No';
       const tzatziki = document.getElementById('tzatziki').checked ? 'Yes' : 'No';
+      const notes = document.getElementById('notes').value.trim();
 
       if (!name || !meal) {
         alert('Please enter your name and select a meal.');
@@ -145,7 +148,8 @@
         meal,
         tomato,
         onion,
-        tzatziki
+        tzatziki,
+        notes
       };
 
       fetch(webhookURL, {
