@@ -4,42 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Graciela's 2nd Birthday RSVP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Neucha&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://i.imgur.com/R3gRQPi.jpg') center/cover no-repeat;
-      color: #742c2c;
+      font-family: 'Raleway', sans-serif;
+      background: url('https://i.imgur.com/R3gRQPi.jpg') center/cover no-repeat fixed;
+      color: #3a1f0d;
     }
     .container {
-      background: rgba(255, 255, 255, 0.95);
-      max-width: 480px;
+      background: rgba(255, 255, 255, 0.97);
+      max-width: 500px;
       margin: 2rem auto;
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
       text-align: center;
     }
-    h1, h2, p {
-      margin: 1rem 0;
+    h1, h2 {
+      font-family: 'Neucha', cursive;
+      color: #5e1e1e;
+    }
+    p {
+      margin: 0.5rem 0 1.5rem;
+      font-size: 1rem;
     }
     button, select, input[type="text"] {
-      padding: 0.75rem 1rem;
+      padding: 0.8rem 1rem;
       font-size: 1rem;
-      margin: 0.5rem 0;
+      margin: 0.6rem 0;
       width: 100%;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      border-radius: 10px;
+      border: 1px solid #b7b7b7;
     }
     .btn-group button {
       width: 45%;
       margin: 0.5rem;
+      background: #5e1e1e;
+      color: white;
+      border: none;
+    }
+    .btn-group button:hover {
+      background: #852323;
     }
     .checkboxes label {
       display: flex;
       align-items: center;
       margin: 0.3rem 0;
       justify-content: start;
+      font-size: 0.95rem;
     }
     .hidden { display: none; }
   </style>
@@ -70,6 +83,7 @@
       <option value="Chicken">Chicken</option>
       <option value="Lamb">Lamb</option>
       <option value="Pork">Pork</option>
+      <option value="Vegetarian">Vegetarian</option>
     </select>
     <p>Choose your toppings:</p>
     <div class="checkboxes">
@@ -139,9 +153,17 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-      .then(() => {
-        document.getElementById('form').classList.add('hidden');
-        document.getElementById('thanks').classList.remove('hidden');
+      .then(response => {
+        if (response.ok) {
+          document.getElementById('form').classList.add('hidden');
+          document.getElementById('thanks').classList.remove('hidden');
+        } else {
+          alert("There was a problem submitting your RSVP. Please try again later.");
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting RSVP:', error);
+        alert("Could not connect. Please try again later.");
       });
     }
   </script>
