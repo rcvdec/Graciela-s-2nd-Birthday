@@ -1,14 +1,149 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Graciela's 2nd Birthday RSVP</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://i.imgur.com/R3gRQPi.jpg') center/cover no-repeat;
+      color: #742c2c;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      max-width: 480px;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    h1, h2, p {
+      margin: 1rem 0;
+    }
+    button, select, input[type="text"] {
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      margin: 0.5rem 0;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .btn-group button {
+      width: 45%;
+      margin: 0.5rem;
+    }
+    .checkboxes label {
+      display: flex;
+      align-items: center;
+      margin: 0.3rem 0;
+      justify-content: start;
+    }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-  <h1>Graciela’s 2nd Birthday!</h1>
-  <p><strong>📅 Sunday, 6th July @ 1PM</strong></p>
-  <p><strong>📍 Big Fat Greek, Campbelltown</strong></p>
+  <div class="container" id="home">
+    <h1>Graciela’s 2nd Birthday</h1>
+    <p>🎉 Let’s celebrate!</p>
+    <p>📅 Sunday, 6th July @ 1PM</p>
+    <p>📍 Big Fat Greek – 2 Rennie Rd, Campbelltown</p>
+    <button onclick="showRSVP()">RSVP</button>
+  </div>
+
+  <div class="container hidden" id="rsvp">
+    <h2>Will you be attending?</h2>
+    <div class="btn-group">
+      <button onclick="rsvpYes()">✅ Yes, we can make it</button>
+      <button onclick="rsvpNo()">❌ We cannot make it</button>
+    </div>
+  </div>
+
+  <div class="container hidden" id="form">
+    <h2>Who’s coming?</h2>
+    <input type="text" id="name" placeholder="Your Name">
+    <label for="meal">Select your Gyros:</label>
+    <select id="meal">
+      <option value="">-- Choose One --</option>
+      <option value="Chicken">Chicken</option>
+      <option value="Lamb">Lamb</option>
+      <option value="Pork">Pork</option>
+    </select>
+    <p>Choose your toppings:</p>
+    <div class="checkboxes">
+      <label><input type="checkbox" id="tomato"> Tomato</label>
+      <label><input type="checkbox" id="onion"> Onion</label>
+      <label><input type="checkbox" id="tzatziki"> Tzatziki</label>
+    </div>
+    <button onclick="submitYes()">Submit</button>
+  </div>
+
+  <div class="container hidden" id="thanks">
+    <h2>Thank You!</h2>
+    <p>Your RSVP has been received. We can’t wait to celebrate! 🎈</p>
+  </div>
+
+  <div class="container hidden" id="decline">
+    <h2>Thank You</h2>
+    <p>We hope to see you next time! 🎈</p>
+  </div>
+
+  <script>
+    const webhookURL = "https://script.google.com/macros/s/AKfycbyhli803Gi_vrCBIam_My0qfsXDTeijZthFrgzxyLViNYkTL2JmEMLigHTdn4ZfCWmPwQ/exec";
+
+    function showRSVP() {
+      document.getElementById('home').classList.add('hidden');
+      document.getElementById('rsvp').classList.remove('hidden');
+    }
+
+    function rsvpYes() {
+      document.getElementById('rsvp').classList.add('hidden');
+      document.getElementById('form').classList.remove('hidden');
+    }
+
+    function rsvpNo() {
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attending: 'No' })
+      });
+      document.getElementById('rsvp').classList.add('hidden');
+      document.getElementById('decline').classList.remove('hidden');
+    }
+
+    function submitYes() {
+      const name = document.getElementById('name').value.trim();
+      const meal = document.getElementById('meal').value;
+      const tomato = document.getElementById('tomato').checked ? 'Yes' : 'No';
+      const onion = document.getElementById('onion').checked ? 'Yes' : 'No';
+      const tzatziki = document.getElementById('tzatziki').checked ? 'Yes' : 'No';
+
+      if (!name || !meal) {
+        alert('Please enter your name and select a meal.');
+        return;
+      }
+
+      const data = {
+        attending: 'Yes',
+        name,
+        meal,
+        tomato,
+        onion,
+        tzatziki
+      };
+
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        document.getElementById('form').classList.add('hidden');
+        document.getElementById('thanks').classList.remove('hidden');
+      });
+    }
+  </script>
 </body>
 </html>
