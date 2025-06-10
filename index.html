@@ -76,15 +76,15 @@
   </div>
 
   <div class="container hidden" id="form">
-    <h2>Who’s coming?</h2>
+    <h2>Who’s coming? <span style="font-size: 0.9rem; font-weight: normal;">(please RSVP individually for each guest)</span></h2>
     <input type="text" id="name" placeholder="Your Name" />
     <label for="meal">Select your Gyros:</label>
     <select id="meal">
       <option value="">-- Choose One --</option>
-      <option value="Chicken">Chicken</option>
-      <option value="Lamb">Lamb</option>
-      <option value="Pork">Pork</option>
-      <option value="Vegetarian">Vegetarian</option>
+      <option value="Chicken">Chicken (Comes with hot lemon salted chips and a drink)</option>
+      <option value="Lamb">Lamb (Comes with hot lemon salted chips and a drink)</option>
+      <option value="Pork">Pork (Comes with hot lemon salted chips and a drink)</option>
+      <option value="Vegetarian">Vegetarian (Comes with hot lemon salted chips and a drink)</option>
     </select>
     <p>Choose your toppings:</p>
     <div class="checkboxes">
@@ -94,6 +94,16 @@
     </div>
     <textarea id="notes" placeholder="Any special requests or allergies?"></textarea>
     <button onclick="submitYes()">Submit</button>
+  </div>
+
+  <div class="container hidden" id="form-no">
+    <h2>We’re sorry you can’t make it</h2>
+    <p>Please enter up to 4 names for those not attending:</p>
+    <input type="text" id="noName1" placeholder="Name 1 (optional)" />
+    <input type="text" id="noName2" placeholder="Name 2 (optional)" />
+    <input type="text" id="noName3" placeholder="Name 3 (optional)" />
+    <input type="text" id="noName4" placeholder="Name 4 (optional)" />
+    <button onclick="submitNo()">Submit</button>
   </div>
 
   <div class="container hidden" id="thanks">
@@ -120,13 +130,8 @@
     }
 
     function rsvpNo() {
-      fetch(webhookURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ attending: 'No' })
-      });
       document.getElementById('rsvp').classList.add('hidden');
-      document.getElementById('decline').classList.remove('hidden');
+      document.getElementById('form-no').classList.remove('hidden');
     }
 
     function submitYes() {
@@ -167,6 +172,34 @@
       })
       .catch(error => {
         console.error('Error submitting RSVP:', error);
+        alert("Could not connect. Please try again later.");
+      });
+    }
+
+    function submitNo() {
+      const names = [
+        document.getElementById('noName1').value.trim(),
+        document.getElementById('noName2').value.trim(),
+        document.getElementById('noName3').value.trim(),
+        document.getElementById('noName4').value.trim()
+      ].filter(n => n);
+
+      const data = {
+        attending: 'No',
+        names: names.join(', ')
+      };
+
+      fetch(webhookURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        document.getElementById('form-no').classList.add('hidden');
+        document.getElementById('decline').classList.remove('hidden');
+      })
+      .catch(error => {
+        console.error('Error submitting RSVP (No):', error);
         alert("Could not connect. Please try again later.");
       });
     }
