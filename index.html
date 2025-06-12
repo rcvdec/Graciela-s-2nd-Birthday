@@ -117,96 +117,75 @@
   </div>
 
   <script>
-    const webhookURL = "https://script.google.com/macros/s/AKfycbx-CrmJ1v5IHs8SjF2OfmxGoZbPJf-JBuF3yrgQ14thWv3VsODUyEev7dr_BoBX0kfN/exec";
+   const webhookURL = "https://script.google.com/macros/s/AKfycbx-CrmJ1v5IHs8SjF2OfmxGoZbPJf-JBuF3yrgQ14thWv3VsODUyEev7dr_BoBX0kfN/exec";
 
-    function showRSVP() {
-      document.getElementById('home').classList.add('hidden');
-      document.getElementById('rsvp').classList.remove('hidden');
+  function submitYes() {
+    const name = document.getElementById('name').value.trim();
+    const meal = document.getElementById('meal').value;
+    const tomato = document.getElementById('tomato').checked ? 'Yes' : 'No';
+    const onion = document.getElementById('onion').checked ? 'Yes' : 'No';
+    const tzatziki = document.getElementById('tzatziki').checked ? 'Yes' : 'No';
+    const notes = document.getElementById('notes').value.trim();
+
+    if (!name || !meal) {
+      alert('Please enter your name and select a meal.');
+      return;
     }
 
-    function rsvpYes() {
-      document.getElementById('rsvp').classList.add('hidden');
-      document.getElementById('form').classList.remove('hidden');
-    }
+    const data = {
+      attending: 'Yes',
+      name,
+      meal,
+      tomato,
+      onion,
+      tzatziki,
+      notes
+    };
 
-    function rsvpNo() {
-      document.getElementById('rsvp').classList.add('hidden');
-      document.getElementById('form-no').classList.remove('hidden');
-    }
-
-    function submitYes() {
-      const name = document.getElementById('name').value.trim();
-      const meal = document.getElementById('meal').value;
-      const tomato = document.getElementById('tomato').checked ? 'Yes' : 'No';
-      const onion = document.getElementById('onion').checked ? 'Yes' : 'No';
-      const tzatziki = document.getElementById('tzatziki').checked ? 'Yes' : 'No';
-      const notes = document.getElementById('notes').value.trim();
-
-      if (!name || !meal) {
-        alert('Please enter your name and select a meal.');
-        return;
+    fetch(webhookURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (response.ok) {
+        document.getElementById('form').classList.add('hidden');
+        document.getElementById('thanks').classList.remove('hidden');
+      } else {
+        alert("There was a problem submitting your RSVP. Please try again later.");
       }
+    })
+    .catch(error => {
+      console.error('Error submitting RSVP:', error);
+      alert("Could not connect. Please try again later.");
+    });
+  }
 
-      const data = {
-        contents: JSON.stringify({
-          attending: 'Yes',
-          name,
-          meal,
-          tomato,
-          onion,
-          tzatziki,
-          notes
-        })
-      };
+  function submitNo() {
+    const names = [
+      document.getElementById('noName1').value.trim(),
+      document.getElementById('noName2').value.trim(),
+      document.getElementById('noName3').value.trim(),
+      document.getElementById('noName4').value.trim()
+    ].filter(n => n);
 
-      fetch(webhookURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      .then(response => {
-        if (response.ok) {
-          document.getElementById('form').classList.add('hidden');
-          document.getElementById('thanks').classList.remove('hidden');
-        } else {
-          alert("There was a problem submitting your RSVP. Please try again later.");
-        }
-      })
-      .catch(error => {
-        console.error('Error submitting RSVP:', error);
-        alert("Could not connect. Please try again later.");
-      });
-    }
+    const data = {
+      attending: 'No',
+      names: names.join(', ')
+    };
 
-    function submitNo() {
-      const names = [
-        document.getElementById('noName1').value.trim(),
-        document.getElementById('noName2').value.trim(),
-        document.getElementById('noName3').value.trim(),
-        document.getElementById('noName4').value.trim()
-      ].filter(n => n);
-
-      const data = {
-        contents: JSON.stringify({
-          attending: 'No',
-          names: names.join(', ')
-        })
-      };
-
-      fetch(webhookURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      .then(() => {
-        document.getElementById('form-no').classList.add('hidden');
-        document.getElementById('decline').classList.remove('hidden');
-      })
-      .catch(error => {
-        console.error('Error submitting RSVP (No):', error);
-        alert("Could not connect. Please try again later.");
-      });
-    }
-  </script>
-</body>
-</html>
+    fetch(webhookURL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      document.getElementById('form-no').classList.add('hidden');
+      document.getElementById('decline').classList.remove('hidden');
+    })
+    .catch(error => {
+      console.error('Error submitting RSVP (No):', error);
+      alert("Could not connect. Please try again later.");
+    });
+  }
+</script>
