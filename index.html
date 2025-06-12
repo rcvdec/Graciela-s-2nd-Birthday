@@ -148,13 +148,15 @@
       }
 
       const data = {
-        attending: 'Yes',
-        name,
-        meal,
-        tomato,
-        onion,
-        tzatziki,
-        notes
+        contents: JSON.stringify({
+          attending: 'Yes',
+          name,
+          meal,
+          tomato,
+          onion,
+          tzatziki,
+          notes
+        })
       };
 
       fetch(webhookURL, {
@@ -185,8 +187,10 @@
       ].filter(n => n);
 
       const data = {
-        attending: 'No',
-        names: names.join(', ')
+        contents: JSON.stringify({
+          attending: 'No',
+          names: names.join(', ')
+        })
       };
 
       fetch(webhookURL, {
